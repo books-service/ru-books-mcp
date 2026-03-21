@@ -1,0 +1,14 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.books-service/ru-books",
+  "title": "RU Books MCP",
+  "description": "MCP-сервер для поиска русскоязычных книг, получения карточек и кандидатов для рекомендаций.",
+  "version": "0.1.0",
+  "websiteUrl": "https://knigochit.ru",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://knigochit.ru/mcp"
+    }
+  ]
+}
