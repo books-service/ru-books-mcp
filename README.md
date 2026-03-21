@@ -19,6 +19,16 @@
 
 - `streamable-http`
 
+Поддерживаемые параметры (кратко):
+
+- `books_search`: `query`, `limit`, `offset`, `filters.author`, `filters.genre`, `filters.language`, `filters.min_price`, `filters.max_price`
+- `recommendation_candidates`: `user_query`, `limit`, `filters.author`, `filters.genre`, `filters.language`, `filters.min_price`, `filters.max_price`
+- `book_details`: `book_id`
+
+Сейчас не поддерживается:
+
+- `filters.formats`, `filters.without_series`, `filters.popularity` (и другие нестандартные поля)
+
 ## Инструменты
 
 - `books_search` — поиск книг по запросу и опциональным фильтрам.
