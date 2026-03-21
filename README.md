@@ -7,6 +7,19 @@
 - Endpoint: `https://knigochit.ru/mcp`
 - Health: `https://knigochit.ru/health`
 
+## Подключение агента
+
+Минимальные параметры для подключения:
+
+- Base URL MCP: `https://knigochit.ru/mcp`
+- Transport: `streamable-http`
+- Авторизация: не требуется (API-ключ не нужен)
+
+Если клиент просит дополнительные настройки:
+
+- Health URL: `https://knigochit.ru/health`
+- Рекомендуемый `Accept`: `application/json, text/event-stream`
+
 ## Инструменты
 
 - `books_search` — поиск книг по запросу и опциональным фильтрам.
