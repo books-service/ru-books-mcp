@@ -5,20 +5,19 @@
 - Имя в MCP Registry: `io.github.books-service/ru-books`
 - Транспорт: Streamable HTTP
 - Endpoint: `https://knigochit.ru/mcp`
+- Аутентификация: не требуется (без API key/токена)
 - Health: `https://knigochit.ru/health`
 
 ## Подключение агента
 
-Минимальные параметры для подключения:
+Минимально необходимое:
 
-- Base URL MCP: `https://knigochit.ru/mcp`
-- Transport: `streamable-http`
-- Авторизация: не требуется (API-ключ не нужен)
+- Base URL MCP-сервера: `https://knigochit.ru/mcp`
+- Аутентификация: не требуется (API key/токен не нужны)
 
-Если клиент просит дополнительные настройки:
+Дополнительно (если клиент спрашивает transport):
 
-- Health URL: `https://knigochit.ru/health`
-- Рекомендуемый `Accept`: `application/json, text/event-stream`
+- `streamable-http`
 
 ## Инструменты
 
