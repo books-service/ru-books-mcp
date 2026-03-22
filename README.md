@@ -21,7 +21,7 @@
 
 Поддерживаемые параметры (кратко):
 
-- `books_search`: `query`, `limit`, `offset` (`filters.*` пока поддерживаются, но deprecated для browse-сценариев)
+- `books_search`: `query`, `limit`, `offset`
 - `books_by_genre`: `genre`, `limit`, `offset`
 - `books_by_author`: `author`, `limit`, `offset`
 - `books_by_language`: `language`, `limit`, `offset`
@@ -38,12 +38,31 @@
 
 - Неподдерживаемые аргументы инструментов возвращаются как явная ошибка в `tools/call` (`isError: true`).
 - Неподдерживаемые фильтры возвращаются как явная ошибка в `tools/call` (`isError: true`).
+- `books_search.filters` не входит в публичный контракт `tools/list` и доступен только в legacy-режиме совместимости.
+- В текущем production-профиле legacy-режим `books_search.filters` отключен.
+- Browse-инструменты (`books_by_*`, `books_without_series`) возвращают `items`, `has_more`, `next_offset` и не возвращают полный `total` (для быстрого ответа на большом каталоге).
 - Для browse-запросов используйте профильные инструменты:
   - жанр: `books_by_genre`
   - автор: `books_by_author`
   - формат: `books_by_format`
   - язык: `books_by_language`
   - без серии: `books_without_series`
+
+## Как выбирать инструмент
+
+- Любые книги по жанру: `books_by_genre`
+- Любые книги по автору: `books_by_author`
+- Любые книги по языку: `books_by_language`
+- Любые книги по формату: `books_by_format`
+- Любые книги без серии: `books_without_series`
+- Свободный текстовый поиск (название/описание/метаданные): `books_search`
+- Детальная карточка книги: `book_details`
+
+Анти-паттерны:
+
+- Не используйте `books_search` для browse-задач по жанру/автору/формату/языку.
+- Не используйте `recommendation_candidates` для простого «дай N книг по жанру» (для этого есть `books_by_genre`).
+- Не ожидайте работу `books_search.filters` в production: этот legacy-режим отключен.
 
 ## Инструменты
 
@@ -79,6 +98,14 @@ curl -X POST https://knigochit.ru/mcp \
 curl -X POST https://knigochit.ru/mcp \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
+```
+
+### Пример: «любые 5 книг жанра фантастика»
+
+```bash
+curl -X POST https://knigochit.ru/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"books_by_genre","arguments":{"genre":"фантастика","limit":5}}}'
 ```
 
 ## Примечания
