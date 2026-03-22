@@ -59,21 +59,6 @@
 После initialize вызови tools/list и используй его как источник истины для этой сессии.
 ```
 
-### Вариант 2: добавить MCP в конфиг вручную
-
-Добавьте в конфигурацию MCP-клиента:
-
-```json
-{
-  "mcpServers": {
-    "ru-books": {
-      "url": "https://knigochit.ru/mcp",
-      "transport": "streamable-http"
-    }
-  }
-}
-```
-
 ## Как выбирать инструмент
 
 - Любые 5 книг по жанру: `books_by_genre`
@@ -94,6 +79,14 @@
 ## Ограничения и поведение
 
 - Неподдерживаемые аргументы/фильтры возвращаются как явная ошибка в `tools/call` (`isError: true`).
+- `limit` должен быть `>=1`, `offset` — `>=0`; иначе возвращается явная ошибка валидации.
+- Для `recommendation_candidates.filters` конфликт `min_price > max_price` возвращается как явная ошибка валидации.
+- `books_by_author` приоритизирует точные/префиксные совпадения автора; для неоднозначных фамилий сначала показывает доминирующего автора.
+- `books_search` работает в 2 фазы: strict-поиск + fallback по токенам длинного запроса (если strict пустой).
+- В strict-фазе `books_search` добавлен typo-tolerant matching (trigram) для запросов с опечатками.
+- `recommendation_candidates` работает в 2 фазы (strict -> fallback по токенам), если strict-результатов недостаточно.
+- В ответе `recommendation_candidates` есть `diagnostic`; при `items: []` он объясняет причину пустой выдачи и дает подсказки.
+- Для `recommendation_candidates` в `diagnostic` возвращаются `status`, `strict_candidates`, `fallback_candidates`, чтобы агент видел, какой этап подбора сработал.
 - Browse-инструменты возвращают `items`, `has_more`, `next_offset` (без полного `total`).
 - `filters.popularity` и другие нестандартные фильтры не поддерживаются.
 
