@@ -8,74 +8,66 @@
 - Аутентификация: не требуется (без API key/токена)
 - Health: `https://knigochit.ru/health`
 
-## Подключение агента
+## Возможности
 
-Минимально необходимое:
+- Поиск книг по свободному тексту: `books_search`
+- Browse-сценарии по явным атрибутам: `books_by_genre`, `books_by_author`, `books_by_language`, `books_by_format`, `books_without_series`
+- Детальная карточка книги: `book_details`
+- Кандидаты для ранжирования агентом: `recommendation_candidates`
 
-- Base URL MCP-сервера: `https://knigochit.ru/mcp`
-- Аутентификация: не требуется (API key/токен не нужны)
+## Установка
 
-Дополнительно (если клиент спрашивает transport):
+Отдельная установка сервера не требуется: сервис уже развернут публично.
 
-- `streamable-http`
+Нужен только MCP-клиент/агент с поддержкой Streamable HTTP.
 
-Поддерживаемые параметры (кратко):
+## Подключение
 
-- `books_search`: `query`, `limit`, `offset`
-- `books_by_genre`: `genre`, `limit`, `offset`
-- `books_by_author`: `author`, `limit`, `offset`
-- `books_by_language`: `language`, `limit`, `offset`
-- `books_by_format`: `format` (`text`/`audio`/`book`/`ebook`), `limit`, `offset`
-- `books_without_series`: `limit`, `offset`
-- `recommendation_candidates`: `user_query`, `limit`, `filters.author`, `filters.genre`, `filters.language`, `filters.min_price`, `filters.max_price`, `filters.without_series`, `filters.formats`
-- `book_details`: `book_id`
+Минимальные параметры:
 
-Сейчас не поддерживается:
+- Base URL: `https://knigochit.ru/mcp`
+- Transport: `streamable-http`
+- Аутентификация: не требуется
 
-- `filters.popularity` (и другие нестандартные поля)
+Если ваш клиент использует JSON-конфиг MCP-серверов, обычно достаточно такого фрагмента:
 
-Важно:
+```json
+{
+  "mcpServers": {
+    "ru-books": {
+      "url": "https://knigochit.ru/mcp",
+      "transport": "streamable-http"
+    }
+  }
+}
+```
 
-- Неподдерживаемые аргументы инструментов возвращаются как явная ошибка в `tools/call` (`isError: true`).
-- Неподдерживаемые фильтры возвращаются как явная ошибка в `tools/call` (`isError: true`).
-- `books_search.filters` не входит в публичный контракт `tools/list` и доступен только в legacy-режиме совместимости.
-- В текущем production-профиле legacy-режим `books_search.filters` отключен.
-- Browse-инструменты (`books_by_*`, `books_without_series`) возвращают `items`, `has_more`, `next_offset` и не возвращают полный `total` (для быстрого ответа на большом каталоге).
-- Для browse-запросов используйте профильные инструменты:
-  - жанр: `books_by_genre`
-  - автор: `books_by_author`
-  - формат: `books_by_format`
-  - язык: `books_by_language`
-  - без серии: `books_without_series`
+Примечание: формат конфигурации может немного отличаться в разных клиентах, но `url` и transport всегда те же.
 
 ## Как выбирать инструмент
 
-- Любые книги по жанру: `books_by_genre`
-- Любые книги по автору: `books_by_author`
-- Любые книги по языку: `books_by_language`
-- Любые книги по формату: `books_by_format`
-- Любые книги без серии: `books_without_series`
-- Свободный текстовый поиск (название/описание/метаданные): `books_search`
-- Детальная карточка книги: `book_details`
+- Любые 5 книг по жанру: `books_by_genre`
+- Любые 5 книг по автору: `books_by_author`
+- Любые 5 книг по языку: `books_by_language`
+- Любые 5 книг по формату: `books_by_format`
+- Любые 5 книг без серии: `books_without_series`
+- Поиск по текстовому запросу: `books_search`
+- Подробная карточка книги: `book_details`
 
-Анти-паттерны:
+Важно для агентов:
 
-- Не используйте `books_search` для browse-задач по жанру/автору/формату/языку.
-- Не используйте `recommendation_candidates` для простого «дай N книг по жанру» (для этого есть `books_by_genre`).
-- Не ожидайте работу `books_search.filters` в production: этот legacy-режим отключен.
+- После `initialize` всегда выполняйте `tools/list` и используйте его как источник истины для текущей сессии.
+- Для browse-задач не используйте `books_search`.
+- Не используйте `recommendation_candidates` для простого «дай N книг по жанру».
+- `books_search.filters` в production отключен.
 
-## Инструменты
+## Ограничения и поведение
 
-- `books_search` — текстовый поиск по запросу.
-- `books_by_genre` — витринный просмотр книг по жанру без текстового запроса.
-- `books_by_author` — витринный просмотр книг по автору.
-- `books_by_language` — витринный просмотр книг по языку.
-- `books_by_format` — витринный просмотр книг по формату.
-- `books_without_series` — витринный просмотр книг без серии.
-- `book_details` — получение подробной карточки по `book_id`.
-- `recommendation_candidates` — получение кандидатов для ранжирования на стороне агента.
+- Неподдерживаемые аргументы/фильтры возвращаются как явная ошибка в `tools/call` (`isError: true`).
+- Browse-инструменты возвращают `items`, `has_more`, `next_offset` (без полного `total`).
+- `filters.popularity` и другие нестандартные фильтры не поддерживаются.
 
-## Быстрая проверка
+## Проверка подключения
 
 ### Health
 
@@ -107,8 +99,3 @@ curl -X POST https://knigochit.ru/mcp \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"books_by_genre","arguments":{"genre":"фантастика","limit":5}}}'
 ```
-
-## Примечания
-
-- Сервер возвращает данные поиска и наборы кандидатов.
-- Финальная рекомендация для пользователя формируется агентом/клиентом.
