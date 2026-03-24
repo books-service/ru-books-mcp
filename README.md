@@ -8,6 +8,11 @@
 - Аутентификация: не требуется (без API key/токена)
 - Health: `https://knigochit.ru/health`
 
+## Для кого эта страница
+
+- Для пользователей и агентов, которым нужно подключиться к серверу и вызывать инструменты.
+- Здесь нет внутренних планов, деплой-заметок и другой внутренней документации разработки.
+
 ## Возможности
 
 - Поиск книг по свободному тексту: `books_search`
@@ -87,7 +92,7 @@
 - `recommendation_candidates` работает в 2 фазы (strict -> fallback по токенам), если strict-результатов недостаточно.
 - В ответе `recommendation_candidates` есть `diagnostic`; при `items: []` он объясняет причину пустой выдачи и дает подсказки.
 - Для `recommendation_candidates` в `diagnostic` возвращаются `status`, `strict_candidates`, `fallback_candidates`, чтобы агент видел, какой этап подбора сработал.
-- Browse-инструменты возвращают `items`, `has_more`, `next_offset` (без полного `total`).
+- `books_search` и browse-инструменты возвращают `items`, `has_more`, `next_offset` (без полного `total`).
 - `filters.popularity` и другие нестандартные фильтры не поддерживаются.
 
 ## Проверка подключения
@@ -104,7 +109,7 @@ curl https://knigochit.ru/health
 curl -X POST https://knigochit.ru/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-05","capabilities":{},"clientInfo":{"name":"manual-client","version":"0.1.0"}}}'
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-12-11","capabilities":{},"clientInfo":{"name":"manual-client","version":"0.1.0"}}}'
 ```
 
 ### MCP tools/list
