@@ -3,8 +3,22 @@
   "name": "io.github.books-service/ru-books",
   "title": "RU Books MCP",
   "description": "MCP-сервер для поиска русскоязычных книг, получения карточек и кандидатов для рекомендаций.",
-  "version": "0.1.0",
+  "version": "0.3.2",
   "websiteUrl": "https://knigochit.ru",
+  "repository": {
+    "url": "https://github.com/books-service/ru-books-mcp",
+    "source": "github",
+    "id": "1188268967"
+  },
+  "icons": [
+    {
+      "src": "https://knigochit.ru/static/favicon/favicon-512.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "512x512"
+      ]
+    }
+  ],
   "remotes": [
     {
       "type": "streamable-http",

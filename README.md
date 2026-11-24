@@ -88,12 +88,18 @@
 - Для `recommendation_candidates.filters` конфликт `min_price > max_price` возвращается как явная ошибка валидации.
 - `books_by_author` приоритизирует точные/префиксные совпадения автора; для неоднозначных фамилий сначала показывает доминирующего автора.
 - `books_search` работает в 2 фазы: strict-поиск + fallback по токенам длинного запроса (если strict пустой).
-- В strict-фазе `books_search` добавлен typo-tolerant matching (trigram) для запросов с опечатками.
+- В strict-фазе сначала выполняется lightweight-поиск, а typo-tolerant matching (trigram) включается только при пустом lightweight-результате.
 - `recommendation_candidates` работает в 2 фазы (strict -> fallback по токенам), если strict-результатов недостаточно.
 - В ответе `recommendation_candidates` есть `diagnostic`; при `items: []` он объясняет причину пустой выдачи и дает подсказки.
 - Для `recommendation_candidates` в `diagnostic` возвращаются `status`, `strict_candidates`, `fallback_candidates`, чтобы агент видел, какой этап подбора сработал.
 - `books_search` и browse-инструменты возвращают `items`, `has_more`, `next_offset` (без полного `total`).
 - `filters.popularity` и другие нестандартные фильтры не поддерживаются.
+
+## Политика выдачи (контракт 0.2.0)
+Каждая книга в ответах содержит: `age_rating` и `age_gate` (18+), `warnings` (обязательные предупреждения — показывайте пользователю вместе с книгой), `ad_label`/`advertiser` (ссылка `product_url` — реклама). Для материалов 18+ описание и обложка в `book_details` возвращаются только при `adult_confirmed=true` — передавайте его, только если пользователь подтвердил, что ему есть 18 лет.
+
+## Предложения партнёров и идентификаторы (контракт 0.3.0)
+Книга приходит одной записью со всеми предложениями партнёров в `offers[]` (у каждого — `ad_label`/`advertiser`, ссылка `url` — реклама), `book_id` имеет вид `b<stable_id>`, `card_url` — страница книги на knigochit.ru. Старые числовые `book_id` принимаются в `book_details`.
 
 ## Проверка подключения
 
